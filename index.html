@@ -3,843 +3,401 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Subhash Chandra — IAM & Azure AD Administrator</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Subhash Chandra · AD & Azure AD Administrator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --bg2: #111118;
-    --bg3: #16161f;
-    --card: #1a1a25;
-    --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.12);
-    --accent: #00d4ff;
-    --accent2: #7c3aed;
-    --accent3: #10b981;
-    --text: #f0f0f8;
-    --muted: #8888aa;
-    --faint: #444466;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    line-height: 1.7;
-    overflow-x: hidden;
-  }
-
-  /* GRID BACKGROUND */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* NOISE OVERLAY */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    opacity: 0.4;
-    z-index: 0;
-  }
-
-  /* NAV */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.2rem 4rem;
-    background: rgba(10,10,15,0.8);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.1rem;
-    letter-spacing: -0.02em;
-    color: var(--text);
-  }
-
-  .nav-logo span { color: var(--accent); }
-
-  .nav-links {
-    display: flex;
-    gap: 2.5rem;
-    list-style: none;
-  }
-
-  .nav-links a {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--muted);
-    text-decoration: none;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    transition: color 0.2s;
-  }
-
-  .nav-links a:hover { color: var(--accent); }
-
-  /* SECTIONS */
-  section { position: relative; z-index: 1; }
-
-  /* HERO */
-  #hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    padding: 8rem 4rem 5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .hero-inner {
-    max-width: 800px;
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeUp 0.9s ease forwards 0.2s;
-  }
-
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    color: var(--accent);
-    border: 1px solid rgba(0,212,255,0.25);
-    padding: 0.4rem 1rem;
-    border-radius: 100px;
-    margin-bottom: 2rem;
-    background: rgba(0,212,255,0.05);
-  }
-
-  .hero-badge::before {
-    content: '';
-    width: 6px; height: 6px;
-    background: var(--accent);
-    border-radius: 50%;
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  .hero-name {
-    font-family: 'Playfair Display', serif;
-    font-weight: 900;
-    font-size: clamp(3.2rem, 7vw, 5.8rem);
-    line-height: 1.05;
-    letter-spacing: -0.01em;
-    margin-bottom: 0.5rem;
-  }
-
-  .hero-name .firstname {
-    color: #ffffff;
-  }
-
-  .hero-name .lastname {
-    color: var(--accent);
-  }
-
-  .hero-greeting {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1.3rem;
-    font-weight: 300;
-    color: var(--muted);
-    margin-bottom: 0.4rem;
-  }
-
-  .hero-greeting strong {
-    color: var(--text);
-    font-weight: 500;
-  }
-
-  .hero-title {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.88rem;
-    color: var(--muted);
-    margin-bottom: 1.5rem;
-    letter-spacing: 0.03em;
-    border-left: 3px solid var(--accent);
-    padding-left: 0.9rem;
-    margin-top: 1rem;
-  }
-
-  .hero-desc {
-    font-size: 1.1rem;
-    color: var(--muted);
-    max-width: 580px;
-    margin-bottom: 3rem;
-    line-height: 1.8;
-  }
-
-  .hero-stats {
-    display: flex;
-    gap: 3rem;
-    margin-bottom: 3rem;
-  }
-
-  .stat-item { }
-  .stat-num {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 2.2rem;
-    color: var(--text);
-    line-height: 1;
-  }
-  .stat-num span { color: var(--accent); }
-  .stat-label {
-    font-size: 0.78rem;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 0.06em;
-    margin-top: 0.3rem;
-  }
-
-  .hero-ctas {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--accent);
-    color: #000;
-    padding: 0.85rem 2rem;
-    border-radius: 6px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.82rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-
-  .btn-primary:hover {
-    background: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0,212,255,0.3);
-  }
-
-  .btn-outline {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    border: 1px solid var(--border2);
-    color: var(--text);
-    padding: 0.85rem 2rem;
-    border-radius: 6px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.82rem;
-    letter-spacing: 0.05em;
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-
-  .btn-outline:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    transform: translateY(-2px);
-  }
-
-  /* HERO GLOW */
-  .hero-glow {
-    position: absolute;
-    top: 20%;
-    right: -10%;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* SECTION WRAPPER */
-  .section-wrap {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 6rem 4rem;
-  }
-
-  .section-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.15em;
-    color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .section-label::after {
-    content: '';
-    flex: 1;
-    max-width: 60px;
-    height: 1px;
-    background: var(--accent);
-    opacity: 0.4;
-  }
-
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-    letter-spacing: -0.02em;
-    margin-bottom: 3rem;
-    line-height: 1.15;
-  }
-
-  /* SKILLS SECTION */
-  #skills { background: var(--bg2); }
-
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .skill-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.8rem;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .skill-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .skill-card:hover {
-    border-color: var(--border2);
-    transform: translateY(-4px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-  }
-
-  .skill-card:hover::before { opacity: 1; }
-
-  .skill-icon {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-  }
-
-  .skill-card h3 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
-    font-size: 1rem;
-    margin-bottom: 1rem;
-    color: var(--text);
-  }
-
-  .skill-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-
-  .skill-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    padding: 0.25rem 0.65rem;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: var(--muted);
-    letter-spacing: 0.03em;
-  }
-
-  /* EXPERIENCE */
-  #experience { background: var(--bg); }
-
-  .exp-list { display: flex; flex-direction: column; gap: 2rem; }
-
-  .exp-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 2rem 2.5rem;
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    gap: 2rem;
-    transition: border-color 0.3s;
-    position: relative;
-  }
-
-  .exp-card:hover { border-color: var(--border2); }
-
-  .exp-card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: linear-gradient(180deg, var(--accent), var(--accent2));
-    border-radius: 3px 0 0 3px;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .exp-card:hover::before { opacity: 1; }
-
-  .exp-meta { }
-
-  .exp-period {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--accent);
-    letter-spacing: 0.06em;
-    margin-bottom: 0.5rem;
-  }
-
-  .exp-company {
-    font-size: 0.85rem;
-    color: var(--muted);
-    font-weight: 400;
-  }
-
-  .exp-role {
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
-    font-size: 1.15rem;
-    margin-bottom: 1rem;
-    color: var(--text);
-  }
-
-  .exp-body { }
-
-  .exp-highlights {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-
-  .exp-highlights li {
-    font-size: 0.9rem;
-    color: var(--muted);
-    padding-left: 1.2rem;
-    position: relative;
-    line-height: 1.6;
-  }
-
-  .exp-highlights li::before {
-    content: '—';
-    position: absolute;
-    left: 0;
-    color: var(--accent);
-    font-family: 'DM Mono', monospace;
-  }
-
-  /* CERTIFICATIONS */
-  #certifications { background: var(--bg2); }
-
-  .cert-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
-  }
-
-  .cert-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.5rem;
-    text-align: center;
-    transition: all 0.3s;
-  }
-
-  .cert-card:hover {
-    border-color: rgba(0,212,255,0.3);
-    background: rgba(0,212,255,0.04);
-    transform: translateY(-3px);
-  }
-
-  .cert-icon {
-    font-size: 2rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .cert-name {
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
-    font-size: 0.88rem;
-    color: var(--text);
-    margin-bottom: 0.3rem;
-  }
-
-  .cert-issuer {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-  }
-
-  /* CONTACT */
-  #contact { background: var(--bg); }
-
-  .contact-inner {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: start;
-  }
-
-  .contact-text { }
-
-  .contact-desc {
-    color: var(--muted);
-    font-size: 1rem;
-    line-height: 1.8;
-    margin-bottom: 2rem;
-  }
-
-  .contact-links {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .contact-link {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 0.9rem;
-    padding: 0.85rem 1.2rem;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .contact-link:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .contact-link-icon {
-    width: 36px;
-    height: 36px;
-    background: rgba(0,212,255,0.08);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    flex-shrink: 0;
-  }
-
-  .open-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: rgba(16,185,129,0.1);
-    border: 1px solid rgba(16,185,129,0.25);
-    color: var(--accent3);
-    padding: 0.5rem 1.2rem;
-    border-radius: 100px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    margin-bottom: 1.5rem;
-  }
-
-  .open-badge::before {
-    content: '';
-    width: 6px; height: 6px;
-    background: var(--accent3);
-    border-radius: 50%;
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 2rem 4rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--faint);
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ANIMATIONS */
-  @keyframes fadeUp {
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-
-  .reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* RESPONSIVE */
-  @media (max-width: 768px) {
-    nav { padding: 1rem 1.5rem; }
-    .nav-links { display: none; }
-    #hero { padding: 7rem 1.5rem 4rem; }
-    .section-wrap { padding: 4rem 1.5rem; }
-    .hero-stats { gap: 1.5rem; }
-    .exp-card { grid-template-columns: 1fr; gap: 0.5rem; }
-    .contact-inner { grid-template-columns: 1fr; gap: 2rem; }
-    footer { flex-direction: column; gap: 0.5rem; text-align: center; padding: 1.5rem; }
-  }
+:root {
+  --ink: #0d0d0d;
+  --ink2: #141414;
+  --ink3: #1c1c1c;
+  --card: #191919;
+  --gold: #c9a84c;
+  --gold2: #e8c97a;
+  --gold-faint: rgba(201,168,76,0.08);
+  --gold-border: rgba(201,168,76,0.22);
+  --text: #f2ede4;
+  --muted: #8a8070;
+  --soft: #5a5248;
+  --border: rgba(242,237,228,0.07);
+  --border2: rgba(242,237,228,0.13);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;font-weight:300;line-height:1.75;overflow-x:hidden;cursor:none}
+
+/* CURSOR */
+.cursor{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform 0.15s ease}
+.cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(201,168,76,0.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%)}
+
+/* TEXTURE */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' fill='rgba(255,255,255,0.015)'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+
+.hr{border:none;border-top:1px solid var(--border);margin:0}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 5rem;background:rgba(13,13,13,0.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;letter-spacing:0.04em;color:var(--text)}
+.logo em{color:var(--gold);font-style:normal}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.2s}
+.nav-links a:hover{color:var(--gold)}
+.nav-cta{font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid var(--gold-border);padding:0.5rem 1.2rem;border-radius:2px;transition:all 0.2s}
+.nav-cta:hover{background:var(--gold-faint)}
+
+/* HERO */
+#hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0 5rem;gap:4rem;position:relative;z-index:1}
+#hero::after{content:'';position:absolute;left:50%;top:15%;bottom:15%;width:1px;background:linear-gradient(to bottom,transparent,var(--gold-border),transparent);pointer-events:none}
+
+.hero-left{padding-top:6rem}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem}
+.hero-eyebrow::before{content:'';width:28px;height:1px;background:var(--gold)}
+.hero-hi{font-size:1.1rem;font-weight:300;color:var(--muted);margin-bottom:0.2rem}
+.hero-name{font-family:'Cormorant Garamond',serif;font-size:clamp(3.5rem,6vw,5.5rem);font-weight:700;line-height:1.0;letter-spacing:-0.01em;margin-bottom:0.2rem}
+.hero-name .first{color:var(--text)}
+.hero-name .last{color:transparent;-webkit-text-stroke:1.5px var(--gold)}
+.hero-role{font-family:'JetBrains Mono',monospace;font-size:0.78rem;letter-spacing:0.05em;color:var(--muted);margin:1.4rem 0 1rem;padding-left:1rem;border-left:2px solid var(--gold);line-height:2}
+.hero-tagline{font-size:1rem;color:var(--muted);max-width:460px;line-height:1.85;margin-bottom:2.5rem}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-gold{display:inline-flex;align-items:center;gap:0.5rem;background:var(--gold);color:#0d0d0d;font-family:'JetBrains Mono',monospace;font-size:0.72rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:0.9rem 2rem;border-radius:2px;text-decoration:none;transition:all 0.25s}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-2px);box-shadow:0 12px 40px rgba(201,168,76,0.25)}
+.btn-ghost{display:inline-flex;align-items:center;gap:0.5rem;border:1px solid var(--border2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;padding:0.9rem 2rem;border-radius:2px;text-decoration:none;transition:all 0.25s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
+
+/* HERO STATS */
+.hero-right{padding-top:6rem;display:flex;flex-direction:column;gap:1px}
+.stat-block{background:var(--card);border:1px solid var(--border);padding:2rem 2.5rem;transition:all 0.3s;position:relative;overflow:hidden}
+.stat-block::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);opacity:0;transition:opacity 0.3s}
+.stat-block:hover{border-color:var(--gold-border)}
+.stat-block:hover::after{opacity:1}
+.stat-block:first-child{border-radius:4px 4px 0 0}
+.stat-block:last-child{border-radius:0 0 4px 4px}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:700;color:var(--gold);line-height:1;margin-bottom:0.25rem}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.stat-desc{font-size:0.82rem;color:var(--soft);margin-top:0.3rem}
+
+/* SECTION COMMONS */
+.section-wrap{max-width:1200px;margin:0 auto;padding:7rem 5rem;position:relative;z-index:1}
+.section-eyebrow{font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem}
+.section-eyebrow::before{content:'';width:28px;height:1px;background:var(--gold)}
+.section-heading{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:600;letter-spacing:-0.01em;line-height:1.15;margin-bottom:0.5rem}
+.section-sub{color:var(--muted);font-size:0.95rem;max-width:540px;margin-bottom:3.5rem;line-height:1.8}
+
+/* ABOUT */
+#about{background:var(--ink2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.about-grid{display:grid;grid-template-columns:1fr 2fr;gap:5rem;align-items:start}
+.about-label{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-style:italic;color:var(--gold);line-height:1.5;margin-top:0.5rem}
+.about-body p{font-size:1rem;color:var(--muted);line-height:1.9;margin-bottom:1.2rem}
+.about-body p strong{color:var(--text);font-weight:500}
+.about-info{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem}
+.info-key{font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--soft);margin-bottom:0.2rem}
+.info-val{font-size:0.88rem;color:var(--text)}
+
+/* SKILLS */
+#skills{background:var(--ink)}
+.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.skill-cell{background:var(--card);padding:2rem;transition:background 0.3s}
+.skill-cell:hover{background:var(--ink3)}
+.skill-cell-top{display:flex;align-items:center;gap:0.75rem;margin-bottom:1.2rem}
+.skill-number{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--gold);opacity:0.3;line-height:1}
+.skill-title{font-size:0.9rem;font-weight:500;color:var(--text);line-height:1.3}
+.skill-tags{display:flex;flex-wrap:wrap;gap:0.35rem}
+.skill-tag{font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:0.04em;color:var(--muted);background:rgba(242,237,228,0.04);border:1px solid var(--border);padding:0.22rem 0.6rem;border-radius:2px}
+
+/* EXPERIENCE */
+#experience{background:var(--ink2)}
+.exp-timeline{display:flex;flex-direction:column}
+.exp-item{display:grid;grid-template-columns:220px 1fr;gap:3rem;padding:3rem 0;border-bottom:1px solid var(--border);position:relative}
+.exp-item:last-child{border-bottom:none}
+.exp-item::before{content:'';position:absolute;left:210px;top:3.8rem;width:8px;height:8px;background:var(--gold);border-radius:50%;box-shadow:0 0 0 3px var(--ink2),0 0 0 4px var(--gold-border)}
+.exp-period{font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:0.5rem}
+.exp-company{font-size:0.85rem;color:var(--muted);line-height:1.5}
+.exp-company strong{color:var(--text);font-weight:500;display:block}
+.exp-promoted{font-size:0.72rem;color:var(--gold);font-family:'JetBrains Mono',monospace;margin-top:0.3rem}
+.exp-role{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--text);margin-bottom:1.2rem;line-height:1.2}
+.exp-highlights{list-style:none;display:flex;flex-direction:column;gap:0.65rem}
+.exp-highlights li{font-size:0.88rem;color:var(--muted);padding-left:1.4rem;position:relative;line-height:1.7}
+.exp-highlights li::before{content:'›';position:absolute;left:0;color:var(--gold);font-size:1rem;line-height:1.5}
+
+/* CERTIFICATIONS */
+#certifications{background:var(--ink)}
+.cert-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.cert-cell{background:var(--card);padding:1.8rem;text-align:center;transition:background 0.3s;position:relative}
+.cert-cell:hover{background:var(--ink3)}
+.cert-cell::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity 0.3s}
+.cert-cell:hover::before{opacity:1}
+.cert-badge{width:44px;height:44px;background:var(--gold-faint);border:1px solid var(--gold-border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin:0 auto 1rem}
+.cert-name{font-size:0.82rem;font-weight:500;color:var(--text);margin-bottom:0.3rem;line-height:1.3}
+.cert-issuer{font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:0.06em;color:var(--muted)}
+
+/* CONTACT */
+#contact{background:var(--ink2);border-top:1px solid var(--border)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:start}
+.contact-quote{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-style:italic;color:var(--muted);line-height:1.5;margin-bottom:2rem}
+.contact-quote em{color:var(--gold);font-style:normal}
+.contact-open{display:inline-flex;align-items:center;gap:0.6rem;font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);background:var(--gold-faint);border:1px solid var(--gold-border);padding:0.5rem 1.1rem;border-radius:20px;margin-bottom:2.5rem}
+.contact-open::before{content:'';width:6px;height:6px;background:var(--gold);border-radius:50%;animation:blink 2s ease-in-out infinite}
+.contact-links{display:flex;flex-direction:column;gap:0.75rem}
+.contact-row{display:flex;align-items:center;gap:1.2rem;text-decoration:none;padding:1.1rem 1.4rem;background:var(--card);border:1px solid var(--border);border-radius:3px;transition:all 0.2s;color:var(--muted);font-size:0.88rem}
+.contact-row:hover{border-color:var(--gold-border);color:var(--text);transform:translateX(4px)}
+.contact-icon{width:34px;height:34px;background:var(--gold-faint);border:1px solid var(--gold-border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0}
+
+/* PROFILE CARD */
+.profile-card{background:var(--card);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.profile-card-head{background:var(--gold-faint);border-bottom:1px solid var(--gold-border);padding:1.5rem 2rem}
+.profile-card-head h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:var(--gold);margin-bottom:0.2rem}
+.profile-card-head p{font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.profile-row{display:flex;justify-content:space-between;align-items:flex-start;padding:0.9rem 2rem;border-bottom:1px solid var(--border);font-size:0.83rem}
+.profile-row:last-child{border-bottom:none}
+.profile-row-key{font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--soft);flex-shrink:0;padding-top:0.1rem}
+.profile-row-val{color:var(--text);text-align:right;max-width:200px;line-height:1.4}
+
+/* FOOTER */
+footer{background:var(--ink);border-top:1px solid var(--border);padding:2rem 5rem;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+.footer-l{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;color:var(--muted)}
+.footer-l em{color:var(--gold);font-style:normal}
+.footer-r{font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--soft)}
+
+/* ANIMATIONS */
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.anim-fadein{opacity:0;animation:fadeIn 0.9s ease forwards}
+.anim-up{opacity:0;transform:translateY(30px);animation:fadeUp 0.85s ease forwards}
+.d1{animation-delay:0.1s}.d2{animation-delay:0.25s}.d3{animation-delay:0.4s}.d4{animation-delay:0.55s}.d5{animation-delay:0.7s}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.75s ease,transform 0.75s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem}
+  .nav-links,.nav-cta{display:none}
+  #hero{grid-template-columns:1fr;padding:7rem 1.5rem 3rem;gap:2rem}
+  #hero::after{display:none}
+  .hero-right{flex-direction:row;flex-wrap:wrap}
+  .stat-block{flex:1;min-width:140px}
+  .section-wrap{padding:4rem 1.5rem}
+  .about-grid{grid-template-columns:1fr;gap:2rem}
+  .skills-grid{grid-template-columns:1fr 1fr}
+  .exp-item{grid-template-columns:1fr;gap:0.5rem}
+  .exp-item::before{display:none}
+  .cert-grid{grid-template-columns:1fr 1fr}
+  .contact-grid{grid-template-columns:1fr;gap:3rem}
+  footer{flex-direction:column;gap:0.5rem;text-align:center;padding:1.5rem}
+}
+@media(max-width:600px){
+  .skills-grid{grid-template-columns:1fr}
+  .about-info{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curRing"></div>
+
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">SC<span>.</span></div>
+  <div class="logo">Subhash <em>Chandra</em></div>
   <ul class="nav-links">
+    <li><a href="#about">About</a></li>
     <li><a href="#skills">Skills</a></li>
     <li><a href="#experience">Experience</a></li>
-    <li><a href="#certifications">Certs</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <li><a href="#certifications">Certifications</a></li>
   </ul>
+  <a href="mailto:subhashchandra4444@gmail.com" class="nav-cta">Hire Me</a>
 </nav>
 
 <!-- HERO -->
-<section id="hero" style="position:relative;">
-  <div class="hero-glow"></div>
-  <div class="hero-inner">
-    <div class="hero-badge">Available for Senior IAM Roles</div>
-    <p class="hero-greeting">Hi, I'm</p>
-    <h1 class="hero-name">
-      <span class="firstname">Subhash </span><span class="lastname">Chandra</span>
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow anim-fadein d1">Senior IAM Professional &nbsp;·&nbsp; 9+ Years</div>
+    <p class="hero-hi anim-up d2">Hi, I'm</p>
+    <h1 class="hero-name anim-up d2">
+      <span class="first">Subhash</span><br>
+      <span class="last">Chandra</span>
     </h1>
-    <p class="hero-title">Active Directory &amp; Azure AD Administrator &nbsp;·&nbsp; Microsoft Entra ID &nbsp;·&nbsp; Zero Trust</p>
-    <p class="hero-desc">
-      9+ years securing hybrid enterprise identity infrastructure. I build the walls that keep the wrong people out — and tear down the friction that slows the right people down.
+    <p class="hero-role anim-up d3">
+      Active Directory &amp; Azure AD Administrator<br>
+      Microsoft Entra ID &nbsp;·&nbsp; IAM &nbsp;·&nbsp; Zero Trust &nbsp;·&nbsp; PowerShell
     </p>
-    <div class="hero-stats">
-      <div class="stat-item">
-        <div class="stat-num">9<span>+</span></div>
-        <div class="stat-label">Years Experience</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">53</div>
-        <div class="stat-label">Branches Managed</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">18</div>
-        <div class="stat-label">Engineers Led</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">99.9<span>%</span></div>
-        <div class="stat-label">Uptime Maintained</div>
-      </div>
+    <p class="hero-tagline anim-up d4">
+      9+ years securing hybrid enterprise identity infrastructure at HCLTech. I ensure the right people get in — and keep everyone else out.
+    </p>
+    <div class="hero-actions anim-up d5">
+      <a href="mailto:subhashchandra4444@gmail.com" class="btn-gold">Get In Touch ↗</a>
+      <a href="https://linkedin.com/in/subhash-chandra" target="_blank" class="btn-ghost">LinkedIn ↗</a>
     </div>
-    <div class="hero-ctas">
-      <a href="/cdn-cgi/l/email-protection#51222433393022393239303f3523306565656511363c30383d7f323e3c" class="btn-primary">Get in Touch ↗</a>
-      <a href="https://linkedin.com/in/subhash-chandra" target="_blank" class="btn-outline">LinkedIn Profile</a>
+  </div>
+
+  <div class="hero-right anim-fadein d3">
+    <div class="stat-block">
+      <div class="stat-num">9+</div>
+      <div class="stat-label">Years Experience</div>
+      <div class="stat-desc">Enterprise identity &amp; AD administration</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num">53</div>
+      <div class="stat-label">Branches Managed</div>
+      <div class="stat-desc">PAN India network operations</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num">18</div>
+      <div class="stat-label">Engineers Led</div>
+      <div class="stat-desc">As IT Head, UP &amp; Uttarakhand</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num">99.9%</div>
+      <div class="stat-label">Uptime Maintained</div>
+      <div class="stat-desc">HCLTech datacenter operations</div>
     </div>
   </div>
 </section>
+
+<hr class="hr">
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-wrap">
+    <div class="about-grid">
+      <div class="reveal">
+        <div class="section-eyebrow">About Me</div>
+        <p class="about-label">"Securing identities,<br>enabling enterprise."</p>
+      </div>
+      <div class="about-body reveal">
+        <p>I am an <strong>Active Directory &amp; Azure AD Administrator</strong> with 9+ years of hands-on experience managing hybrid identity infrastructure across large-scale, multi-domain enterprise environments at <strong>HCLTech</strong>.</p>
+        <p>My expertise spans <strong>Microsoft Entra ID, Azure AD Connect, Conditional Access, SSO, MFA, PIM, ADFS, FSMO roles, GPOs</strong>, and <strong>PowerShell automation</strong>. I've led teams, managed datacenter operations at 99.9%+ uptime, and built identity governance frameworks for global clients — all with zero-downtime migrations.</p>
+        <p>Prior to HCLTech, I served as <strong>IT Head for UP &amp; Uttarakhand</strong> at Anunta Technology, supervising 18 engineers across 53 branches and administering AD for 1,460+ users — a role that sharpened both my technical depth and leadership instincts.</p>
+        <div class="about-info">
+          <div><div class="info-key">Location</div><div class="info-val">Lucknow, Uttar Pradesh</div></div>
+          <div><div class="info-key">Current Employer</div><div class="info-val">HCLTech</div></div>
+          <div><div class="info-key">Education</div><div class="info-val">B.Sc. Mathematics, CSJMU Kanpur</div></div>
+          <div><div class="info-key">Availability</div><div class="info-val" style="color:var(--gold)">Open to Senior IAM Roles</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="hr">
 
 <!-- SKILLS -->
 <section id="skills">
   <div class="section-wrap">
-    <div class="section-label">Core Expertise</div>
-    <h2 class="section-title reveal">Technical Skills</h2>
-    <div class="skills-grid">
-
-      <div class="skill-card reveal">
-        <div class="skill-icon">🔐</div>
-        <h3>Identity and Access Management</h3>
+    <div class="section-eyebrow reveal">Core Competencies</div>
+    <h2 class="section-heading reveal">Technical Skills</h2>
+    <p class="section-sub reveal">A decade-wide toolkit spanning identity, cloud, automation, and enterprise infrastructure.</p>
+    <div class="skills-grid reveal">
+      <div class="skill-cell">
+        <div class="skill-cell-top"><span class="skill-number">01</span><span class="skill-title">Identity &amp; Access Management</span></div>
         <div class="skill-tags">
-          <span class="skill-tag">Azure AD</span>
-          <span class="skill-tag">Entra ID</span>
-          <span class="skill-tag">ADFS</span>
-          <span class="skill-tag">SSO</span>
-          <span class="skill-tag">MFA</span>
-          <span class="skill-tag">PIM</span>
-          <span class="skill-tag">RBAC</span>
-          <span class="skill-tag">Conditional Access</span>
-          <span class="skill-tag">SAP GRC</span>
+          <span class="skill-tag">Azure AD</span><span class="skill-tag">Microsoft Entra ID</span><span class="skill-tag">ADFS</span><span class="skill-tag">Azure AD Connect</span><span class="skill-tag">SSO</span><span class="skill-tag">MFA</span><span class="skill-tag">PIM</span><span class="skill-tag">Conditional Access</span><span class="skill-tag">RBAC</span><span class="skill-tag">SAP GRC</span>
         </div>
       </div>
-
-      <div class="skill-card reveal">
-        <div class="skill-icon">🖥️</div>
-        <h3>Active Directory Administration</h3>
+      <div class="skill-cell">
+        <div class="skill-cell-top"><span class="skill-number">02</span><span class="skill-title">Active Directory Administration</span></div>
         <div class="skill-tags">
-          <span class="skill-tag">FSMO Roles</span>
-          <span class="skill-tag">GPOs</span>
-          <span class="skill-tag">OU Design</span>
-          <span class="skill-tag">AD Replication</span>
-          <span class="skill-tag">Sites and Services</span>
-          <span class="skill-tag">DNS / DHCP</span>
-          <span class="skill-tag">ADCS</span>
-          <span class="skill-tag">Domain Migrations</span>
+          <span class="skill-tag">FSMO Roles</span><span class="skill-tag">GPOs</span><span class="skill-tag">OU Design</span><span class="skill-tag">AD Replication</span><span class="skill-tag">Sites &amp; Services</span><span class="skill-tag">DNS / DHCP</span><span class="skill-tag">ADCS</span><span class="skill-tag">Domain Migrations</span><span class="skill-tag">Cross-Domain Trusts</span>
         </div>
       </div>
-
-      <div class="skill-card reveal">
-        <div class="skill-icon">⚡</div>
-        <h3>Automation and Scripting</h3>
+      <div class="skill-cell">
+        <div class="skill-cell-top"><span class="skill-number">03</span><span class="skill-title">PowerShell Automation</span></div>
         <div class="skill-tags">
-          <span class="skill-tag">PowerShell</span>
-          <span class="skill-tag">AD Provisioning</span>
-          <span class="skill-tag">Health Checks</span>
-          <span class="skill-tag">Bulk Operations</span>
-          <span class="skill-tag">GPO Automation</span>
-          <span class="skill-tag">Backup Scripts</span>
+          <span class="skill-tag">AD Provisioning</span><span class="skill-tag">Health Checks</span><span class="skill-tag">Bulk Operations</span><span class="skill-tag">GPO Automation</span><span class="skill-tag">Backup &amp; Recovery</span><span class="skill-tag">AD Clean-up Scripts</span>
         </div>
       </div>
-
-      <div class="skill-card reveal">
-        <div class="skill-icon">☁️</div>
-        <h3>Cloud Platforms</h3>
+      <div class="skill-cell">
+        <div class="skill-cell-top"><span class="skill-number">04</span><span class="skill-title">Cloud Platforms</span></div>
         <div class="skill-tags">
-          <span class="skill-tag">Microsoft Azure</span>
-          <span class="skill-tag">Google Cloud</span>
-          <span class="skill-tag">Azure AD Connect</span>
-          <span class="skill-tag">Hybrid Identity</span>
-          <span class="skill-tag">Zero Trust</span>
+          <span class="skill-tag">Microsoft Azure</span><span class="skill-tag">Google Cloud GCP</span><span class="skill-tag">Hybrid Identity</span><span class="skill-tag">Zero Trust</span><span class="skill-tag">Azure AD Join</span><span class="skill-tag">Cloud Identity Protection</span>
         </div>
       </div>
-
-      <div class="skill-card reveal">
-        <div class="skill-icon">📊</div>
-        <h3>Monitoring and Operations</h3>
+      <div class="skill-cell">
+        <div class="skill-cell-top"><span class="skill-number">05</span><span class="skill-title">Monitoring &amp; Operations</span></div>
         <div class="skill-tags">
-          <span class="skill-tag">ServiceNow</span>
-          <span class="skill-tag">Splunk</span>
-          <span class="skill-tag">Nagios</span>
-          <span class="skill-tag">Power BI</span>
-          <span class="skill-tag">MDM</span>
-          <span class="skill-tag">ITIL V4</span>
+          <span class="skill-tag">ServiceNow</span><span class="skill-tag">Splunk</span><span class="skill-tag">Nagios</span><span class="skill-tag">Power BI</span><span class="skill-tag">MDM</span><span class="skill-tag">ITIL V4</span><span class="skill-tag">BCP / DR</span>
         </div>
       </div>
-
-      <div class="skill-card reveal">
-        <div class="skill-icon">🏗️</div>
-        <h3>Infrastructure and Virtualisation</h3>
+      <div class="skill-cell">
+        <div class="skill-cell-top"><span class="skill-number">06</span><span class="skill-title">Infrastructure &amp; Virtualisation</span></div>
         <div class="skill-tags">
-          <span class="skill-tag">Windows Server 2008-2022</span>
-          <span class="skill-tag">VMware</span>
-          <span class="skill-tag">Hyper-V</span>
-          <span class="skill-tag">BCP / DR</span>
-          <span class="skill-tag">Datacenter Ops</span>
+          <span class="skill-tag">Windows Server 2008–2022</span><span class="skill-tag">VMware</span><span class="skill-tag">Hyper-V</span><span class="skill-tag">Datacenter Ops</span><span class="skill-tag">Server Patching</span><span class="skill-tag">LAN / WAN</span>
         </div>
       </div>
-
     </div>
   </div>
 </section>
 
+<hr class="hr">
+
 <!-- EXPERIENCE -->
 <section id="experience">
   <div class="section-wrap">
-    <div class="section-label">Career Journey</div>
-    <h2 class="section-title reveal">Work Experience</h2>
-    <div class="exp-list">
+    <div class="section-eyebrow reveal">Career Timeline</div>
+    <h2 class="section-heading reveal">Work Experience</h2>
+    <p class="section-sub reveal">9 years of progressive responsibility — from desktop support to enterprise IAM at HCLTech.</p>
+    <div class="exp-timeline">
 
-      <div class="exp-card reveal">
+      <div class="exp-item reveal">
         <div class="exp-meta">
           <div class="exp-period">Mar 2021 — Present</div>
-          <div class="exp-company">HCLTech · Lucknow</div>
+          <div class="exp-company"><strong>HCLTech</strong>Lucknow, India</div>
+          <div class="exp-promoted">↑ Promoted from Team Lead</div>
         </div>
-        <div class="exp-body">
-          <div class="exp-role">Active Directory and Azure AD Administrator</div>
+        <div class="exp-content">
+          <div class="exp-role">Active Directory &amp; Azure AD Administrator</div>
           <ul class="exp-highlights">
-            <li>Manage users, groups, OUs, and GPOs across multi-domain Active Directory environments for a global enterprise client.</li>
-            <li>Administer FSMO roles, AD Sites and Services, DC replication, cross-domain trusts, and domain controller health.</li>
-            <li>Configure Microsoft Entra ID and Azure AD Connect for hybrid identity; manage Azure AD Join and ADFS.</li>
-            <li>Enforce Zero Trust via Conditional Access Policies, MFA, Privileged Identity Management, and RBAC; manage ADCS.</li>
-            <li>Develop PowerShell scripts automating AD clean-up, user provisioning, GPO management, and health checks — significantly reducing manual overhead.</li>
+            <li>Manage users, groups, OUs, and GPOs across multi-domain Active Directory environments for a global enterprise client at scale.</li>
+            <li>Administer FSMO roles, AD Sites &amp; Services, DC replication, cross-domain trusts, and domain controller health.</li>
+            <li>Configure and govern Microsoft Entra ID &amp; Azure AD Connect for hybrid identity; manage Azure AD Join and ADFS.</li>
+            <li>Enforce Zero Trust via Conditional Access Policies, MFA, Privileged Identity Management (PIM), and RBAC; manage ADCS and cloud-based identity protection.</li>
+            <li>Develop PowerShell scripts automating AD clean-up, provisioning, GPO management, and health checks — significantly reducing manual overhead.</li>
+            <li>Audit and remediate stale/orphaned accounts, expired credentials, and inactive objects; manage AD migrations and domain consolidations with zero downtime.</li>
             <li>Build Power BI dashboards surfacing identity health metrics, access anomalies, and IAM KPIs for leadership.</li>
           </ul>
         </div>
       </div>
 
-      <div class="exp-card reveal">
+      <div class="exp-item reveal">
         <div class="exp-meta">
           <div class="exp-period">Dec 2019 — Feb 2021</div>
-          <div class="exp-company">HCLTech · Lucknow</div>
+          <div class="exp-company"><strong>HCLTech</strong>Lucknow, India</div>
         </div>
-        <div class="exp-body">
+        <div class="exp-content">
           <div class="exp-role">Datacenter Operations Team Lead</div>
           <ul class="exp-highlights">
-            <li>Led 24x7 datacenter operations team maintaining 99.9%+ uptime for critical enterprise infrastructure.</li>
+            <li>Led 24x7 datacenter operations team maintaining 99.9%+ uptime across server provisioning, patching, and VMware/Hyper-V virtualisation.</li>
             <li>Drove ITIL V4 incident, change, and problem management; authored and executed BCP/DR playbooks.</li>
-            <li>Mentored engineers, reducing team escalations by 25%.</li>
+            <li>Mentored engineers, reducing team escalations by 25% through structured knowledge transfer.</li>
           </ul>
         </div>
       </div>
 
-      <div class="exp-card reveal">
+      <div class="exp-item reveal">
         <div class="exp-meta">
           <div class="exp-period">Sep 2017 — Dec 2019</div>
-          <div class="exp-company">Anunta Technology · Lucknow</div>
+          <div class="exp-company"><strong>Anunta Technology</strong>Lucknow, India</div>
         </div>
-        <div class="exp-body">
-          <div class="exp-role">Senior IT Support Engineer L1 / IT Head (UP and Uttarakhand)</div>
+        <div class="exp-content">
+          <div class="exp-role">Senior IT Support Engineer L1 / IT Head (UP &amp; Uttarakhand)</div>
           <ul class="exp-highlights">
-            <li>Supervised 18 junior engineers across PAN India; administered on-premises AD for 1,460 users and 980 computers.</li>
-            <li>Managed IT assets, incidents, and software compliance across 53 branches.</li>
-            <li>Oversaw network operations including router configuration and LAN/WAN troubleshooting.</li>
+            <li>Supervised 18 junior engineers across PAN India; administered on-premises AD for 1,460 users and 980 computers including GPO configuration and security policy enforcement.</li>
+            <li>Managed IT assets, incidents, and software compliance; oversaw network operations for 53 branches including router configuration and LAN/WAN troubleshooting.</li>
           </ul>
         </div>
       </div>
 
-      <div class="exp-card reveal">
+      <div class="exp-item reveal">
         <div class="exp-meta">
           <div class="exp-period">Aug 2016 — Aug 2017</div>
-          <div class="exp-company">SAC Management India · Lucknow</div>
+          <div class="exp-company"><strong>SAC Management India</strong>Pvt. Ltd., Lucknow</div>
         </div>
-        <div class="exp-body">
+        <div class="exp-content">
           <div class="exp-role">Desktop Support Engineer</div>
           <ul class="exp-highlights">
             <li>Delivered L1/L2 desktop support; managed Windows OS environments, endpoints, and peripherals.</li>
-            <li>Assisted with AD user management and network connectivity.</li>
+            <li>Assisted with AD user management and network connectivity — the foundation that launched a career in identity infrastructure.</li>
           </ul>
         </div>
       </div>
@@ -847,116 +405,57 @@
     </div>
   </div>
 </section>
+
+<hr class="hr">
 
 <!-- CERTIFICATIONS -->
 <section id="certifications">
   <div class="section-wrap">
-    <div class="section-label">Credentials</div>
-    <h2 class="section-title reveal">Certifications</h2>
-    <div class="cert-grid">
-
-      <div class="cert-card reveal">
-        <div class="cert-icon">☁️</div>
-        <div class="cert-name">Google Cloud Professional Architect</div>
-        <div class="cert-issuer">Google Cloud</div>
-      </div>
-
-      <div class="cert-card reveal">
-        <div class="cert-icon">🔷</div>
-        <div class="cert-name">Azure Administrator Associate</div>
-        <div class="cert-issuer">Microsoft</div>
-      </div>
-
-      <div class="cert-card reveal">
-        <div class="cert-icon">🛡️</div>
-        <div class="cert-name">Certified Ethical Hacker</div>
-        <div class="cert-issuer">EC-Council · CEH</div>
-      </div>
-
-      <div class="cert-card reveal">
-        <div class="cert-icon">🌐</div>
-        <div class="cert-name">Cisco CCNA</div>
-        <div class="cert-issuer">Cisco Systems</div>
-      </div>
-
-      <div class="cert-card reveal">
-        <div class="cert-icon">📋</div>
-        <div class="cert-name">ITIL V4 Foundation</div>
-        <div class="cert-issuer">Axelos</div>
-      </div>
-
-      <div class="cert-card reveal">
-        <div class="cert-icon">📊</div>
-        <div class="cert-name">Six Sigma Yellow Belt</div>
-        <div class="cert-issuer">Six Sigma</div>
-      </div>
-
-      <div class="cert-card reveal">
-        <div class="cert-icon">📈</div>
-        <div class="cert-name">Power BI Bootcamp</div>
-        <div class="cert-issuer">Microsoft</div>
-      </div>
-
-      <div class="cert-card reveal">
-        <div class="cert-icon">💻</div>
-        <div class="cert-name">Jetking Certified H and N Professional</div>
-        <div class="cert-issuer">Jetking</div>
-      </div>
-
+    <div class="section-eyebrow reveal">Credentials</div>
+    <h2 class="section-heading reveal">Certifications</h2>
+    <p class="section-sub reveal">Industry-recognised qualifications spanning cloud, security, networking, and IT service management.</p>
+    <div class="cert-grid reveal">
+      <div class="cert-cell"><div class="cert-badge">☁️</div><div class="cert-name">Google Cloud Professional Architect</div><div class="cert-issuer">Google Cloud</div></div>
+      <div class="cert-cell"><div class="cert-badge">🔷</div><div class="cert-name">Azure Administrator Associate</div><div class="cert-issuer">Microsoft · AZ-104</div></div>
+      <div class="cert-cell"><div class="cert-badge">🛡️</div><div class="cert-name">Certified Ethical Hacker</div><div class="cert-issuer">EC-Council · CEH</div></div>
+      <div class="cert-cell"><div class="cert-badge">🌐</div><div class="cert-name">Cisco CCNA</div><div class="cert-issuer">Cisco Systems</div></div>
+      <div class="cert-cell"><div class="cert-badge">📋</div><div class="cert-name">ITIL V4 Foundation</div><div class="cert-issuer">Axelos / PeopleCert</div></div>
+      <div class="cert-cell"><div class="cert-badge">📊</div><div class="cert-name">Six Sigma Yellow Belt</div><div class="cert-issuer">Six Sigma Institute</div></div>
+      <div class="cert-cell"><div class="cert-badge">📈</div><div class="cert-name">Power BI Bootcamp</div><div class="cert-issuer">Microsoft</div></div>
+      <div class="cert-cell"><div class="cert-badge">💻</div><div class="cert-name">Jetking H&amp;N Professional · DCA</div><div class="cert-issuer">Jetking</div></div>
     </div>
   </div>
 </section>
 
+<hr class="hr">
+
 <!-- CONTACT -->
 <section id="contact">
   <div class="section-wrap">
-    <div class="section-label">Get In Touch</div>
-    <h2 class="section-title reveal">Contact</h2>
-    <div class="contact-inner">
-      <div class="contact-text reveal">
-        <div class="open-badge">Open to Opportunities</div>
-        <p class="contact-desc">
-          Looking for senior IAM, Cloud Identity, or Hybrid Infrastructure roles where I can bring both deep technical expertise and team leadership experience. Based in Lucknow — open to remote and hybrid positions.
-        </p>
+    <div class="section-eyebrow reveal">Let's Connect</div>
+    <h2 class="section-heading reveal">Get In Touch</h2>
+    <div class="contact-grid">
+      <div class="reveal">
+        <p class="contact-quote">"Looking for a role where deep <em>identity expertise</em> meets real leadership impact."</p>
+        <div class="contact-open">Open to Opportunities</div>
         <div class="contact-links">
-          <a href="/cdn-cgi/l/email-protection#4d3e382f252c3e252e252c23293f2c797979790d2a202c2421632e2220" class="contact-link">
-            <span class="contact-link-icon">✉️</span>
-            <span class="__cf_email__" data-cfemail="760503141e17051e151e17181204174242424236111b171f1a5815191b">[email&#160;protected]</span>
-          </a>
-          <a href="https://linkedin.com/in/subhash-chandra" target="_blank" class="contact-link">
-            <span class="contact-link-icon">💼</span>
-            linkedin.com/in/subhash-chandra
-          </a>
-          <a href="tel:+919125882313" class="contact-link">
-            <span class="contact-link-icon">📱</span>
-            +91 91258 82313
-          </a>
+          <a href="mailto:subhashchandra4444@gmail.com" class="contact-row"><span class="contact-icon">✉️</span>subhashchandra4444@gmail.com</a>
+          <a href="https://linkedin.com/in/subhash-chandra" target="_blank" class="contact-row"><span class="contact-icon">💼</span>linkedin.com/in/subhash-chandra</a>
+          <a href="tel:+919125882313" class="contact-row"><span class="contact-icon">📱</span>+91 91258 82313</a>
         </div>
       </div>
-      <div class="reveal" style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem;">
-        <div style="font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 1.5rem;">QUICK PROFILE</div>
-        <div style="display: flex; flex-direction: column; gap: 1rem;">
-          <div style="display: flex; justify-content: space-between; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
-            <span style="font-size: 0.82rem; color: var(--muted); font-family: 'DM Mono', monospace;">Location</span>
-            <span style="font-size: 0.82rem;">Lucknow, UP, India</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
-            <span style="font-size: 0.82rem; color: var(--muted); font-family: 'DM Mono', monospace;">Current Role</span>
-            <span style="font-size: 0.82rem; text-align: right;">AD and Azure AD Admin</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
-            <span style="font-size: 0.82rem; color: var(--muted); font-family: 'DM Mono', monospace;">Employer</span>
-            <span style="font-size: 0.82rem;">HCLTech</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
-            <span style="font-size: 0.82rem; color: var(--muted); font-family: 'DM Mono', monospace;">Experience</span>
-            <span style="font-size: 0.82rem;">9+ Years</span>
-          </div>
-          <div style="display: flex; justify-content: space-between;">
-            <span style="font-size: 0.82rem; color: var(--muted); font-family: 'DM Mono', monospace;">Education</span>
-            <span style="font-size: 0.82rem;">B.Sc Mathematics · CSJMU</span>
-          </div>
+      <div class="profile-card reveal">
+        <div class="profile-card-head">
+          <h3>Subhash Chandra</h3>
+          <p>AD &amp; Azure AD Administrator · HCLTech</p>
         </div>
+        <div class="profile-row"><span class="profile-row-key">Location</span><span class="profile-row-val">Lucknow, Uttar Pradesh, India</span></div>
+        <div class="profile-row"><span class="profile-row-key">Experience</span><span class="profile-row-val">9+ Years</span></div>
+        <div class="profile-row"><span class="profile-row-key">Current Role</span><span class="profile-row-val">AD &amp; Azure AD Administrator</span></div>
+        <div class="profile-row"><span class="profile-row-key">Employer</span><span class="profile-row-val">HCLTech</span></div>
+        <div class="profile-row"><span class="profile-row-key">Education</span><span class="profile-row-val">B.Sc. Mathematics · CSJMU Kanpur</span></div>
+        <div class="profile-row"><span class="profile-row-key">Certifications</span><span class="profile-row-val">GCP · Azure · CEH · CCNA · ITIL V4</span></div>
+        <div class="profile-row"><span class="profile-row-key">Status</span><span class="profile-row-val" style="color:var(--gold)">Open to Senior IAM Roles</span></div>
       </div>
     </div>
   </div>
@@ -964,12 +463,27 @@
 
 <!-- FOOTER -->
 <footer>
-  <span>Subhash Chandra · IAM and Azure AD Administrator</span>
-  <span>Lucknow, Uttar Pradesh, India</span>
+  <div class="footer-l">Subhash <em>Chandra</em> · IAM &amp; Azure AD Administrator</div>
+  <div class="footer-r">Lucknow, Uttar Pradesh · India</div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    ent
+<script>
+const cur = document.getElementById('cur');
+const ring = document.getElementById('curRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+});
+(function anim(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim)})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.transform='translate(-50%,-50%) scale(2.5)';ring.style.transform='translate(-50%,-50%) scale(1.5)'});
+  el.addEventListener('mouseleave',()=>{cur.style.transform='translate(-50%,-50%) scale(1)';ring.style.transform='translate(-50%,-50%) scale(1)'});
+});
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
+},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
